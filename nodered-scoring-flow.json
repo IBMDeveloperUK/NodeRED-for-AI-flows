@@ -1,0 +1,282 @@
+[{
+	"id": "2a02f9b7.37587e",
+	"type": "http in",
+	"z": "173cff63.8a87b1",
+	"name": "",
+	"url": "/score/:label",
+	"method": "get",
+	"upload": false,
+	"swaggerDoc": "",
+	"x": 140,
+	"y": 60,
+	"wires": [
+		["bf6a21bc.2ab548"]
+	]
+}, {
+	"id": "448d0233.eb498c",
+	"type": "inject",
+	"z": "173cff63.8a87b1",
+	"name": "",
+	"topic": "",
+	"payload": "",
+	"payloadType": "date",
+	"repeat": "",
+	"crontab": "",
+	"once": false,
+	"onceDelay": 0.1,
+	"x": 240,
+	"y": 100,
+	"wires": [
+		["bf6a21bc.2ab548"]
+	]
+}, {
+	"id": "bf6a21bc.2ab548",
+	"type": "http request",
+	"z": "173cff63.8a87b1",
+	"name": "get auth token",
+	"method": "GET",
+	"ret": "txt",
+	"url": "https://[[your service authentication endpoint]]/v3/identity/token",
+	"tls": "",
+	"x": 620,
+	"y": 60,
+	"wires": [
+		["65d340e8.055b18", "1d74a2b.a8c915d"]
+	]
+}, {
+	"id": "65d340e8.055b18",
+	"type": "debug",
+	"z": "173cff63.8a87b1",
+	"name": "",
+	"active": false,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 1050,
+	"y": 60,
+	"wires": []
+}, {
+	"id": "1d74a2b.a8c915d",
+	"type": "json",
+	"z": "173cff63.8a87b1",
+	"name": "",
+	"property": "payload",
+	"action": "",
+	"pretty": false,
+	"x": 430,
+	"y": 140,
+	"wires": [
+		["27d6f1db.6e209e"]
+	]
+}, {
+	"id": "27d6f1db.6e209e",
+	"type": "template",
+	"z": "173cff63.8a87b1",
+	"name": "set headers",
+	"field": "headers",
+	"fieldType": "msg",
+	"format": "handlebars",
+	"syntax": "mustache",
+	"template": "{\n\"Authorization\": \"Bearer  {{payload.token}}\" ,\n\"Content-Type\": \"application/json\"\n}",
+	"output": "json",
+	"x": 630,
+	"y": 140,
+	"wires": [
+		["3ffc74bf.6ab6dc"]
+	]
+}, {
+	"id": "3ffc74bf.6ab6dc",
+	"type": "template",
+	"z": "173cff63.8a87b1",
+	"name": "some data to score",
+	"field": "payload",
+	"fieldType": "msg",
+	"format": "json",
+	"syntax": "mustache",
+	"template": "{\n\"fields\":[\"GENDER\",\"AGE\",\"MARITAL_STATUS\",\"PROFESSION\"],\n \"values\":[\n     [\"M\",28,\"Single\",\"Other\"]\n    ,[\"M\",28,\"Married\",\"Other\"]\n    ,[\"M\",28,\"Single\",\"Trades\"]\n    ,[\"M\",28,\"Married\",\"Trades\"]\n    ,[\"F\",28,\"Single\",\"Other\"]\n    ,[\"F\",28,\"Married\",\"Other\"]\n    ,[\"F\",28,\"Single\",\"Trades\"]\n    ,[\"F\",28,\"Married\",\"Trades\"]\n     ]\n} ",
+	"output": "json",
+	"x": 530,
+	"y": 220,
+	"wires": [
+		["ed88112a.7233f"]
+	]
+}, {
+	"id": "302feaf9.b897ae",
+	"type": "debug",
+	"z": "173cff63.8a87b1",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 1050,
+	"y": 460,
+	"wires": []
+}, {
+	"id": "bc7aeb4d.a0729",
+	"type": "http response",
+	"z": "173cff63.8a87b1",
+	"name": "",
+	"statusCode": "",
+	"headers": {},
+	"x": 1050,
+	"y": 540,
+	"wires": []
+}, {
+	"id": "76df95b9.433994",
+	"type": "template",
+	"z": "173cff63.8a87b1",
+	"name": "",
+	"field": "payload",
+	"fieldType": "msg",
+	"format": "handlebars",
+	"syntax": "mustache",
+	"template": "<table>\n{{#payload}}\n<tr>\n{{#fields}}<th>{{.}}</th>{{/fields}}\n</tr>\n{{/payload}}\n\n\n{{#payload}}\n{{#values}}\n    <tr>{{#.}}<td>{{.}}</td>{{/.}}</tr>\n{{/values}}\n{{/payload}}\n</tr>\n</table>",
+	"output": "str",
+	"x": 620,
+	"y": 460,
+	"wires": [
+		["bc7aeb4d.a0729", "302feaf9.b897ae"]
+	]
+}, {
+	"id": "d7b2d9cd.767368",
+	"type": "change",
+	"z": "173cff63.8a87b1",
+	"name": "IS_TENT",
+	"rules": [{
+		"t": "set",
+		"p": "url",
+		"pt": "msg",
+		"to": "[[your ml web service endpoint for tent predictor]]",
+		"tot": "str"
+	}],
+	"action": "",
+	"property": "",
+	"from": "",
+	"to": "",
+	"reg": false,
+	"x": 320,
+	"y": 300,
+	"wires": [
+		["e180a401.dac92"]
+	]
+}, {
+	"id": "ce25ab52.b5bfd",
+	"type": "change",
+	"z": "173cff63.8a87b1",
+	"name": "PRODUCT_LINE",
+	"rules": [{
+		"t": "set",
+		"p": "url",
+		"pt": "msg",
+		"to": "[[your ml web service endpoint for product predictor]]",
+		"tot": "str"
+	}],
+	"action": "",
+	"property": "",
+	"from": "",
+	"to": "",
+	"reg": false,
+	"x": 330,
+	"y": 340,
+	"wires": [
+		["e180a401.dac92"]
+	]
+}, {
+	"id": "e180a401.dac92",
+	"type": "http request",
+	"z": "173cff63.8a87b1",
+	"name": "",
+	"method": "POST",
+	"ret": "txt",
+	"url": "",
+	"tls": "",
+	"x": 590,
+	"y": 380,
+	"wires": [
+		["abf09574.0a11c", "ae6378ed.d4c598"]
+	]
+}, {
+	"id": "abf09574.0a11c",
+	"type": "json",
+	"z": "173cff63.8a87b1",
+	"name": "",
+	"property": "payload",
+	"action": "",
+	"pretty": false,
+	"x": 430,
+	"y": 460,
+	"wires": [
+		["76df95b9.433994"]
+	]
+}, {
+	"id": "ed88112a.7233f",
+	"type": "switch",
+	"z": "173cff63.8a87b1",
+	"name": "",
+	"property": "req.params.label",
+	"propertyType": "msg",
+	"rules": [{
+		"t": "regex",
+		"v": "tent",
+		"vt": "str",
+		"case": true
+	}, {
+		"t": "regex",
+		"v": "product",
+		"vt": "str",
+		"case": true
+	}, {
+		"t": "regex",
+		"v": "spend",
+		"vt": "str",
+		"case": true
+	}],
+	"checkall": "true",
+	"repair": false,
+	"outputs": 3,
+	"x": 130,
+	"y": 300,
+	"wires": [
+		["d7b2d9cd.767368"],
+		["ce25ab52.b5bfd"],
+		["6a658967.e09c4"]
+	]
+}, {
+	"id": "6a658967.e09c4",
+	"type": "change",
+	"z": "173cff63.8a87b1",
+	"name": "PURCHASE_AMOUNT",
+	"rules": [{
+		"t": "set",
+		"p": "url",
+		"pt": "msg",
+		"to": "[[your ml web service endpoint for sales value predictor]]",
+		"tot": "str"
+	}],
+	"action": "",
+	"property": "",
+	"from": "",
+	"to": "",
+	"reg": false,
+	"x": 330,
+	"y": 380,
+	"wires": [
+		["e180a401.dac92"]
+	]
+}, {
+	"id": "ae6378ed.d4c598",
+	"type": "debug",
+	"z": "173cff63.8a87b1",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "false",
+	"x": 1070,
+	"y": 380,
+	"wires": []
+}]

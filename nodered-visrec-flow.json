@@ -1,0 +1,154 @@
+[{
+	"id": "e6781f35.1ccc58",
+	"type": "http in",
+	"z": "7e39d5e9.50b6e4",
+	"name": "",
+	"url": "/chat",
+	"method": "get",
+	"upload": false,
+	"swaggerDoc": "",
+	"x": 100,
+	"y": 300,
+	"wires": [
+		["f658f22d.2d5c5", "e6837f.e2f99c8"]
+	]
+}, {
+	"id": "f3e6eedd.73fd28",
+	"type": "http response",
+	"z": "7e39d5e9.50b6e4",
+	"name": "",
+	"statusCode": "",
+	"headers": {
+		"Cache-Control": "no-store"
+	},
+	"x": 1150,
+	"y": 300,
+	"wires": []
+}, {
+	"id": "f658f22d.2d5c5",
+	"type": "debug",
+	"z": "7e39d5e9.50b6e4",
+	"name": "",
+	"active": false,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 270,
+	"y": 340,
+	"wires": []
+}, {
+	"id": "b98e7383.885078",
+	"type": "http in",
+	"z": "7e39d5e9.50b6e4",
+	"name": "",
+	"url": "/upload.php",
+	"method": "post",
+	"upload": true,
+	"swaggerDoc": "",
+	"x": 130,
+	"y": 380,
+	"wires": [
+		["bc0f0fac.954af8", "1c190dd5.d2ed82"]
+	]
+}, {
+	"id": "bc0f0fac.954af8",
+	"type": "debug",
+	"z": "7e39d5e9.50b6e4",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 290,
+	"y": 420,
+	"wires": []
+}, {
+	"id": "641c1fa6.f099f8",
+	"type": "visual-recognition-v3",
+	"z": "7e39d5e9.50b6e4",
+	"name": "",
+	"apikey": "[[your API key goes here]]",
+	"vr-service-endpoint": "https://gateway-a.watsonplatform.net/visual-recognition/api",
+	"image-feature": "classifyImage",
+	"lang": "en",
+	"x": 610,
+	"y": 380,
+	"wires": [
+		["89949648.1d9de8"]
+	]
+}, {
+	"id": "1c190dd5.d2ed82",
+	"type": "change",
+	"z": "7e39d5e9.50b6e4",
+	"name": "",
+	"rules": [{
+		"t": "set",
+		"p": "payload",
+		"pt": "msg",
+		"to": "req.files[0]buffer",
+		"tot": "msg"
+	}],
+	"action": "",
+	"property": "",
+	"from": "",
+	"to": "",
+	"reg": false,
+	"x": 370,
+	"y": 380,
+	"wires": [
+		["641c1fa6.f099f8"]
+	]
+}, {
+	"id": "c963f52b.22745",
+	"type": "comment",
+	"z": "7e39d5e9.50b6e4",
+	"name": "upload image",
+	"info": "",
+	"x": 110,
+	"y": 420,
+	"wires": []
+}, {
+	"id": "e6837f.e2f99c8",
+	"type": "template",
+	"z": "7e39d5e9.50b6e4",
+	"name": "",
+	"field": "payload",
+	"fieldType": "msg",
+	"format": "handlebars",
+	"syntax": "mustache",
+	"template": "<html>\n<head>\n<script>\n    // common variables\nvar iBytesUploaded = 0;\nvar iBytesTotal = 0;\nvar iPreviousBytesLoaded = 0;\nvar iMaxFilesize = 1048576000; // 1MB\nvar oTimer = 0;\nvar sResultFileSize = '';\nfunction secondsToTime(secs) { // we will use this function to convert seconds in normal time format\n    var hr = Math.floor(secs / 3600);\n    var min = Math.floor((secs - (hr * 3600))/60);\n    var sec = Math.floor(secs - (hr * 3600) -  (min * 60));\n    if (hr < 10) {hr = \"0\" + hr; }\n    if (min < 10) {min = \"0\" + min;}\n    if (sec < 10) {sec = \"0\" + sec;}\n    if (hr) {hr = \"00\";}\n    return hr + ':' + min + ':' + sec;\n};\nfunction bytesToSize(bytes) {\n    var sizes = ['Bytes', 'KB', 'MB'];\n    if (bytes == 0) return 'n/a';\n    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));\n    return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];\n};\nfunction fileSelected() {\n    // hide different warnings\n    document.getElementById('upload_response').style.display = 'none';\n    document.getElementById('error').style.display = 'none';\n    document.getElementById('error2').style.display = 'none';\n    document.getElementById('abort').style.display = 'none';\n    document.getElementById('warnsize').style.display = 'none';\n    // get selected file element\n    var oFile = document.getElementById('image_file').files[0];\n    // filter for image files\n    var rFilter = /^(image\\/bmp|image\\/gif|image\\/jpeg|image\\/png|image\\/tiff)$/i;\n    if (! rFilter.test(oFile.type)) {\n        document.getElementById('error').style.display = 'block';\n        return;\n    }\n    // little test for filesize\n    if (oFile.size > iMaxFilesize) {\n        document.getElementById('warnsize').style.display = 'block';\n        return;\n    }\n    // get preview element\n    var oImage = document.getElementById('preview');\n    // prepare HTML5 FileReader\n    var oReader = new FileReader();\n        oReader.onload = function(e){\n        // e.target.result contains the DataURL which we will use as a source of the image\n        oImage.src = e.target.result;\n        oImage.onload = function () { // binding onload event\n            // we are going to display some custom image information here\n            sResultFileSize = bytesToSize(oFile.size);\n            document.getElementById('fileinfo').style.display = 'block';\n            document.getElementById('filename').innerHTML = 'Name: ' + oFile.name;\n            document.getElementById('filesize').innerHTML = 'Size: ' + sResultFileSize;\n            document.getElementById('filetype').innerHTML = 'Type: ' + oFile.type;\n            document.getElementById('filedim').innerHTML = 'Dimension: ' + oImage.naturalWidth + ' x ' + oImage.naturalHeight;\n        };\n    };\n    // read selected file as DataURL\n    oReader.readAsDataURL(oFile);\n}\nfunction startUploading() {\n    // cleanup all temp states\n    iPreviousBytesLoaded = 0;\n    document.getElementById('upload_response').style.display = 'none';\n    document.getElementById('error').style.display = 'none';\n    document.getElementById('error2').style.display = 'none';\n    document.getElementById('abort').style.display = 'none';\n    document.getElementById('warnsize').style.display = 'none';\n    document.getElementById('progress_percent').innerHTML = '';\n    var oProgress = document.getElementById('progress');\n    oProgress.style.display = 'block';\n    oProgress.style.width = '0px';\n    // get form data for POSTing\n    //var vFD = document.getElementById('upload_form').getFormData(); // for FF3\n    var vFD = new FormData(document.getElementById('upload_form'));\n    // create XMLHttpRequest object, adding few event listeners, and POSTing our data\n    var oXHR = new XMLHttpRequest();\n    oXHR.upload.addEventListener('progress', uploadProgress, false);\n    oXHR.addEventListener('load', uploadFinish, false);\n    oXHR.addEventListener('error', uploadError, false);\n    oXHR.addEventListener('abort', uploadAbort, false);\n    oXHR.open('POST', '/upload.php');\n    oXHR.send(vFD);\n    // set inner timer\n    oTimer = setInterval(doInnerUpdates, 300);\n}\nfunction doInnerUpdates() { // we will use this function to display upload speed\n    var iCB = iBytesUploaded;\n    var iDiff = iCB - iPreviousBytesLoaded;\n    // if nothing new loaded - exit\n    if (iDiff == 0)\n        return;\n    iPreviousBytesLoaded = iCB;\n    iDiff = iDiff * 2;\n    var iBytesRem = iBytesTotal - iPreviousBytesLoaded;\n    var secondsRemaining = iBytesRem / iDiff;\n    // update speed info\n    var iSpeed = iDiff.toString() + 'B/s';\n    if (iDiff > 1024 * 1024) {\n        iSpeed = (Math.round(iDiff * 100/(1024*1024))/100).toString() + 'MB/s';\n    } else if (iDiff > 1024) {\n        iSpeed =  (Math.round(iDiff * 100/1024)/100).toString() + 'KB/s';\n    }\n    document.getElementById('speed').innerHTML = iSpeed;\n    document.getElementById('remaining').innerHTML = '| ' + secondsToTime(secondsRemaining);\n}\nfunction uploadProgress(e) { // upload process in progress\n    if (e.lengthComputable) {\n        iBytesUploaded = e.loaded;\n        iBytesTotal = e.total;\n        var iPercentComplete = Math.round(e.loaded * 100 / e.total);\n        var iBytesTransfered = bytesToSize(iBytesUploaded);\n        document.getElementById('progress_percent').innerHTML = iPercentComplete.toString() + '%';\n        document.getElementById('progress').style.width = (iPercentComplete * 4).toString() + 'px';\n        document.getElementById('b_transfered').innerHTML = iBytesTransfered;\n        if (iPercentComplete == 100) {\n            var oUploadResponse = document.getElementById('upload_response');\n            oUploadResponse.innerHTML = '<h1>Please wait...processing</h1>';\n            oUploadResponse.style.display = 'block';\n        }\n    } else {\n        document.getElementById('progress').innerHTML = 'unable to compute';\n    }\n}\nfunction uploadFinish(e) { // upload successfully finished\n    var oUploadResponse = document.getElementById('upload_response');\n    oUploadResponse.innerHTML = e.target.responseText;\n    oUploadResponse.style.display = 'block';\n    document.getElementById('progress_percent').innerHTML = '100%';\n    document.getElementById('progress').style.width = '400px';\n    document.getElementById('filesize').innerHTML = sResultFileSize;\n    document.getElementById('remaining').innerHTML = '| 00:00:00';\n    clearInterval(oTimer);\n}\nfunction uploadError(e) { // upload error\n    document.getElementById('error2').style.display = 'block';\n    clearInterval(oTimer);\n}\nfunction uploadAbort(e) { // upload abort\n    document.getElementById('abort').style.display = 'block';\n    clearInterval(oTimer);\n}\n</script>\n</head>\n<body>\n<!--\n<form method=post action=\"/chat\">\n    What? <input type=text length=200 name=chat />\n    <input type=submit>\n</form>\n-->\n\n\n<div class=results>\n    {{{results}}}\n</div>\n        <div class=\"container\">\n                <div id=\"upload_response\"></div>\n            <div class=\"contr\"><h2>Select your image then click Classify</h2></div>\n            <div class=\"upload_form_cont\">\n                <form id=\"upload_form\" enctype=\"multipart/form-data\" method=\"post\" action=\"upload.php\">\n                    <div>\n                        <div><label for=\"image_file\">Please select image file</label></div>\n                        <div><input type=\"file\" name=\"image_file\" id=\"image_file\" onchange=\"fileSelected();\" /></div>\n                    </div>\n                    <div>\n                        <input type=\"button\" value=\"Classify\" onclick=\"startUploading()\" />\n                    </div>\n                    <div id=\"fileinfo\">\n                        <div id=\"filename\"></div>\n                        <div id=\"filesize\"></div>\n                        <div id=\"filetype\"></div>\n                        <div id=\"filedim\"></div>\n                    </div>\n                    <div id=\"error\" style=\"display:none;\">You should select valid image files only!</div>\n                    <div id=\"error2\" style=\"display:none;\">An error occurred while uploading the file</div>\n                    <div id=\"abort\" style=\"display:none;\">The upload has been canceled by the user or the browser dropped the connection</div>\n                    <div id=\"warnsize\" style=\"display:none;\">Your file is very big. We can't accept it. Please select more small file</div>\n                    <div id=\"progress_info\">\n                        <div id=\"progress\"></div>\n                        <div id=\"progress_percent\">&nbsp;</div>\n                        <div class=\"clear_both\"></div>\n                        <div>\n                            <div id=\"speed\">&nbsp;</div>\n                            <div id=\"remaining\">&nbsp;</div>\n                            <div id=\"b_transfered\">&nbsp;</div>\n                            <div class=\"clear_both\"></div>\n                        </div>\n\n                    </div>\n                </form>\n                <img id=\"preview\" />\n            </div>\n        </div>\n\n</body>\n",
+	"output": "str",
+	"x": 960,
+	"y": 300,
+	"wires": [
+		["f3e6eedd.73fd28"]
+	]
+}, {
+	"id": "89949648.1d9de8",
+	"type": "template",
+	"z": "7e39d5e9.50b6e4",
+	"name": "classes",
+	"field": "payload",
+	"fieldType": "msg",
+	"format": "handlebars",
+	"syntax": "mustache",
+	"template": "\n\n{{#result}}\n<table>\n {{#images}}\n  {{#classifiers}}\n    {{#classes}}\n        <tr><td>{{class}}</td><td>{{score}}</td><td>{{{type_hierarchy}}}</td></tr>\n    {{/classes}}\n  {{/classifiers}}\n {{/images}}\n</table>\n{{/result}}",
+	"output": "str",
+	"x": 960,
+	"y": 380,
+	"wires": [
+		["e8b5e39.f94bd2"]
+	]
+}, {
+	"id": "e8b5e39.f94bd2",
+	"type": "http response",
+	"z": "7e39d5e9.50b6e4",
+	"name": "",
+	"statusCode": "",
+	"headers": {},
+	"x": 1150,
+	"y": 380,
+	"wires": []
+}]
