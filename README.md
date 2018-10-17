@@ -40,21 +40,33 @@ This creates a Node SDK runtime application, _and_ an instance of the Cloudant N
 ## Reference code patterns and tutorials
 
 There are complete tutorials for each of the main activities:
+
 ### Watson Cognitive
 A very comprehensive set of examples of exploiting Watson Cognitive services via NodeRED is available at [Emma Dawson's node-red-labs github repository](https://github.com/watson-developer-cloud/node-red-labs/tree/master/basic_examples)
+
 ### Creating a machine learning service in Watson Studio
 An example of setting up a scoring service to predict customers' propensity to buy particular retail offerings is available at [developerWorks TV](https://developer.ibm.com/tv/ibm-watson-machine-learning-build-a-logistic-regression-model/). This shows how to create the scoring service - you can then learn how to invoke that service from NodeRED
-### Triggering real-time execution model updates
-Using IOT historical data, this [Cognitive IOT tutorial](https://developer.ibm.com/tutorials/iot-cognitive-iot-app-machine-learning/) shows how to interpret events, identify anomalies, and update runtime processing models to accomodate new knowledge.
+
 ### Invoking 3rd party services
 Since NodeRED is a n open source project, the community develops new nodes as needed - earlier this year, a package for interacting with [Microsoft Azure cognitive services](https://azure.microsoft.com/en-gb/services/cognitive-services/) was created. This package - `node-red-contrib-cognitive-services` - makes it quick and easy to invoke these services from within a NodeRED flow.
 An example flow [Node-Red Azure Computer Vision Photo Recognition Complete Example]
 (https://flows.nodered.org/flow/ae3ba3a1403f25e9a465ae95c509da26) shows how to invoke the image classifier.
 You will need an Azure account, and the necessary service subsciption keys, to be able to try this out.
 
+### Triggering real-time execution model updates
+Using IOT historical data, this [Cognitive IOT tutorial](https://developer.ibm.com/tutorials/iot-cognitive-iot-app-machine-learning/) shows how to interpret events, identify anomalies, and update runtime processing models to accomodate new knowledge.
+
+## What you'll end up with
+It's always good to know what you will get at the end. This workshop will lead to a web application that previews and classifies images with IBM Watson and Microsoft Azure Cognitive (for demo purposes, we'll use pictures of a tent), and demonstrates using a Machine Learning scoring service to predict a prospective customer's likelihood of buying a particular product (for demo purposes, a tent)
+![demo flow](img/mg-brs-demo-flow.png)
+
+![demo overview](img/mg-brs-demo-overview.png)
+
+![demo score](img/mg-brs-nodered-ml-score-result.png)
+
 ## On to the Activities ...
 1. [Watson Nodered 101](https://github.com/IBMCodeLondon/Node-RED-Watson-101)
 1. [Watson Cognitive services - a visual recognition sample](watson-cognitive-nodered.md)
 1. [Watson Machine Learning scoring service](watson-studio-ml-service.md)
 1. [Azure Cognitive services - simple examples](azure-cognitive-nodered.md)
-1. [Watson Studio notebook anomaly detection](anomaly-detection-realtime.md)
+1. [Watson Studio notebook anomaly detection](https://developer.ibm.com/tutorials/iot-cognitive-iot-app-machine-learning)
