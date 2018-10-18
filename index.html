@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!--
+	Licensed Materials - Property of IBM
+	5725-Q07
+	© Copyright IBM Corp. 2015
+	US Government Users Restricted Rights - Use, duplication, or disclosure
+	restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+<html data-ng-app="iotui" data-ng-controller="AppCtrl">
+	<head>
+		<meta name="dcterms.rightsHolder" content="© Copyright IBM Corporation 2014, 2016"/>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content="" />
+		<meta name="author" content="" />
+		<link rel="shortcut icon" href="../../assets/ico/favicon.ico" />
+
+		<title>IBM Watson IoT Platform</title>
+
+		<!-- compiled CSS -->
+		<link rel="stylesheet" type="text/css" href="node_modules/@wiotp-webui/iotcloud.ui.common/vendor/c3/c3.min.css" />
+		<link rel="stylesheet" type="text/css" href="vendor/rickshaw/rickshaw.css" />
+		<link rel="stylesheet" type="text/css" href="assets/iotui-quickstart-0.0.0.12654ed2590f2336.css" />
+
+		<!-- compiled JavaScript -->
+		<script type="text/javascript" src="assets/iotui-quickstart-0.0.0-vendor.9cce51471ea84ca9.js"></script>
+		<script type="text/javascript" src="assets/iotui-quickstart-0.0.0.7b3bc98f8fd5de3f.js"></script>
+
+	  <script>
+		  window.digitalData = {
+		    page: {
+		      category: {
+		        primaryCategory: "Quickstart (Watson IoT Platform)"
+		      },
+		      pageInfo: {
+		        pageID: 'Quickstart',
+		        productTitle: 'Watson IoT Platform'
+		      }
+		    }
+		  };
+		</script>
+		<script src="//1.www.s81c.com/common/stats/ida_stats.js" type="text/javascript"></script>
+
+		<!-- Height fix for IE10 on Windows Phone -->
+		<style>
+			@-webkit-viewport { width: auto !important; }
+			@-moz-viewport { width: auto !important; }
+			@-ms-viewport { width: auto !important; }
+			@-o-viewport { width: auto !important; }
+			@viewport { width: auto !important; }
+		</style>
+	</head>
+
+	<body data-ng-class="{loading: !loaded}">
+
+		<div data-ng-if="!loaded" data-iotc-loading-animation data-color="#ffffff" style="position: absolute;"></div>
+
+		<div data-ng-if="loaded">
+			<nav class="navbar navbar-static-top iotf-gradient-1 iotf-main-nav" data-role="navigation">
+				<!-- Main Navigation -->
+				<div class="row">
+					<div class="col-xs-12">
+						<div data-iotc-root-navigation data-user="user"></div>
+					</div>
+				</div>
+			</nav>
+
+			<div id="allContent" class="container-fluid">
+				<div class="row" data-ui-view="top"></div>
+				<div class="row" data-ui-view="deviceidform"></div>
+
+				<div class="row" style="padding-top:20px; background:white">
+					<div class="col-sm-4" data-ui-view="left1"></div>
+					<div class="col-sm-8" data-ui-view="right1" style="padding-left:50px; padding-right:60px; border-left:1px solid #e2e2e2"></div>
+				</div>
+
+				<div class="row" style="padding-bottom:20px; background:white">
+					<div class="col-sm-8" data-ui-view="left2"></div>
+					<div class="col-sm-4" data-ui-view="right2" style="padding-left:50px; padding-right:60px; border-left:1px solid #e2e2e2"></div>
+				</div>
+			</div>
+
+			<div data-iotc-footer></div>
+		</div>
+	</body>
+</html>
