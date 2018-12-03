@@ -21,6 +21,7 @@ If these are not available to you, there is a reasonably complete free offering 
 ```
 https://sourceforge.net/projects/xtn5250/files/xtn5250/1.19m/xtn5250_119m.jar
 ```
+or another java-based emulator [tn5250j](http://tn5250j.org/)
 
 ## Open source setup
 
@@ -104,19 +105,35 @@ Now install NodeRED:
 	cd /QOpenSys/pkgs/bin
 	/QOpenSys/pkgs/lib/nodejs8/bin/node-red
 ```
-
+#### Watson services
 To exploit the [Watson Cognitive services](https://console.bluemix.net/catalog/?category=ai) directly from the IBMi environment,
 install the Watson package
 ```
 	/QOpenSys/pkgs/bin/npm install node-red-node-watson
 ```
 
+#### Cloud Object Storage
 To access [IBM Cloud Object Storage](https://console.bluemix.net/catalog/services/cloud-object-storage) to save images, etc,
 the following command will install associated NodeRED package:
 ```
 /QOpenSys/pkgs/bin/npm install node-red-contrib-cos
 ```
 
+#### DB2 for i support
+To use DB2 for i from a javascript application (such as NodeRED) on a system which has been initialised via the open source mechanism instead of 5377-OPS, a new connector module is available - [idb-connector](https://www.npmjs.com/package/idb-connector).
+
+The corresponding [NodeRED DB2 for i module](https://www.npmjs.com/package/node-red-contrib-db2-for-i) can use this package in place of the 5377-OPS version, but needs a minor tweak
+```
+/QOpenSys/pkgs/bin/npm install idb-connector
+/QOpenSys/pkgs/bin/npm install node-red-contrib-db2-for-i
+```
+Modify the resulting ibmdb2fori.js file (` /QOpenSys/pkgs/lib/nodejs8/lib/node_modules/node-red-contrib-db2-for-
+i/ibmdb2fori.js` ) - change
+`       var db = require('/QOpenSys/QIBM/ProdData/OPS/Node6/os400/db2i/lib/db2a');` 
+to 
+`       var db = require('db2a');` 
+
+## Launch NodeRED on IBMi
 To launch NodeRED, leave the the QShell, and launch a PASE terminal (*QP2TERM*), and start NodeRED:
 ```
 CALL QP2TERM
@@ -165,4 +182,5 @@ file using your chosen key the next time you deploy a change.
 
 You should now be able to launch the NodeRED IDE from your browser on port *1880*.
 
+If the IDE opens as expected, you can start on getting your IBMi system to perform image classification with [Watson Visual Recognition](https://github.com/IBMCodeLondon/NodeRED-for-AI-flows/blob/master/watson-cognitive-nodered.md).
 
