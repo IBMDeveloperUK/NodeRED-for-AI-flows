@@ -1,3 +1,7 @@
+# NodeRED on IBMi
+
+The following process for installing and configuring Node-RED on IBMI is based on the original [developerWorks IBMi article](https://www.ibm.com/developerworks/ibmi/library/i-running-node-red/index.html), adjusted for the new open source packaging and current versions.
+
 ## IBM 5250 terminal emulator (free)
 At some point, interacting with an IBMi system will likely require a terminal login;
 for this, you will need a terminal emulator that understands and implements the 
@@ -75,8 +79,6 @@ Assuming all goes well, you should see the last few entries in _/tmp/bootstrap.l
 ![bootstrap log](/img/ibmi-nr-bootstrap-sh-log.png)
 
 It is now possible to install a supported version of Node.js as a base for NodeRED.
-
-The process is based on the original [developerWorks IBMi NodeRED article](https://www.ibm.com/developerworks/ibmi/library/i-running-node-red/index.html), adjusted for the new open source packaging and current versions.
 
 ```
 	cd /QOpenSys/pkgs/bin
