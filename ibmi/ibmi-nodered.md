@@ -92,7 +92,7 @@ It is now possible to install a supported version of Node.js as a base for NodeR
 
 ensure the resulting package libraries are included in the PATH for the PASE//QShell environments
 
-_/QOpenSys/pkgs/bin:/QOpenSys/pkgs/lib/nodejs8/bin _
+_/QOpenSys/pkgs/bin:/QOpenSys/pkgs/lib/nodejs8/bin_
 
 ### NodeRED
 
