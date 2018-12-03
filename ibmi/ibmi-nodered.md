@@ -14,13 +14,9 @@ IBM and other commercial organisations offer a variety of terminal emulation pro
 to name just a few.
 
 If these are not available to you, there is a reasonably complete free offering [tn5250](http://tn5250.sourceforge.net)
-
+```
 https://sourceforge.net/projects/xtn5250/files/xtn5250/1.19m/xtn5250_119m.jar
-
-xtn5250_119m.jar
-172.19.83.238
-cfgtcp - set DNS server 	nameserver 10.99.254.254,10.99.254.240
-	CHGTCPDMN INTNETADR('10.99.254.254' '10.99.254.240' *SAME)
+```
 
 ## Open source setup
 
@@ -67,6 +63,8 @@ You should get a listing similar to
 
 ![ftp-ls](/img/ibmi-nr-ftp-tmp-ls.png)
 
+
+### Bootstrapping the environment
 Now run the bootstrap install process, which will install a set of base packages (perl, python, rpm, yum and a few others) needed to get the yum/rpm installation management capability going.
 
 ```
@@ -74,9 +72,12 @@ Now run the bootstrap install process, which will install a set of base packages
 ```
 Assuming all goes well, you should see the last few entries in _/tmp/bootstrap.log_ indicating success:
 
-![bootstrap log](/imgs/ibmi-nr-boostrap-sh-log.png)
+![bootstrap log](/img/ibmi-nr-bootstrap-sh-log.png)
 
-It is now possible to install a supported version of Node.js as a base for NodeRED:
+It is now possible to install a supported version of Node.js as a base for NodeRED.
+
+The process is based on the original [developerWorks IBMi NodeRED article](https://www.ibm.com/developerworks/ibmi/library/i-running-node-red/index.html), adjusted for the new open source packaging and current versions.
+
 ```
 	cd /QOpenSys/pkgs/bin
 	
@@ -86,8 +87,9 @@ It is now possible to install a supported version of Node.js as a base for NodeR
 	npm --version
 	
 ```
+### NodeRED
 
-https://www.ibm.com/developerworks/ibmi/library/i-running-node-red/index.html
+Now install NodeRED:
 
 ```
 	npm install -g --unsafe-perm node-red
@@ -96,8 +98,15 @@ https://www.ibm.com/developerworks/ibmi/library/i-running-node-red/index.html
 	/QOpenSys/pkgs/lib/nodejs8/bin/node-red
 ```
 
-
+To exploit the [Watson Cognitive services](https://console.bluemix.net/catalog/?category=ai) directly from the IBMi environment,
+install the Watson package
+```
 /QOpenSys/pkgs/bin/npm install node-red-node-watson
-/QOpenSys/pkgs/bin/npm install node-red-contrib-cos
+```
 
+To access [IBM Cloud Object Storage](https://console.bluemix.net/catalog/services/cloud-object-storage) to save images, etc,
+the following command will install associated NodeRED package:
+```
+/QOpenSys/pkgs/bin/npm install node-red-contrib-cos
+```
 
