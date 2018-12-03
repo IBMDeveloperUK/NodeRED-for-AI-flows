@@ -71,7 +71,7 @@ classifier that will recognize (or not!) the different vehicle categories.
 
 This is achieved by creating a new DL (deep learning) task, and setting it up to build an image classifier.
 
-![select model](/img/powerai-vision-build-model-select.png)
+![select model](/img/powerai-vision-model-select.png)
 
 Take the default settings; 
 
@@ -111,7 +111,7 @@ This URL will be used to *POST* images to the classifier service.
 With an extra stage added to the Watson Visual Recognition example eslewhere in this repository, you can augment the
 Watson classifier with your specific model results -
 
-![[ibm-watson-powerai](/img/ibmi-watson-powerai-visrec.png)
+![ibm-watson-powerai](/img/ibmi-watson-powerai-visrec.png)
 
 
 
