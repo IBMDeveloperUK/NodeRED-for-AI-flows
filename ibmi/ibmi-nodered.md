@@ -87,8 +87,13 @@ It is now possible to install a supported version of Node.js as a base for NodeR
 	
 	yum install nodejs8 && nodever 8
 	npm --version
-	
+	export NODE_PATH=/QOpenSys/pkgs/lib/nodejs8/lib/node_modules
 ```
+
+ensure the resulting package libraries are included in the PATH for the PASE//QShell environments
+
+_/QOpenSys/pkgs/bin:/QOpenSys/pkgs/lib/nodejs8/bin _
+
 ### NodeRED
 
 Now install NodeRED:
@@ -103,7 +108,7 @@ Now install NodeRED:
 To exploit the [Watson Cognitive services](https://console.bluemix.net/catalog/?category=ai) directly from the IBMi environment,
 install the Watson package
 ```
-/QOpenSys/pkgs/bin/npm install node-red-node-watson
+	/QOpenSys/pkgs/bin/npm install node-red-node-watson
 ```
 
 To access [IBM Cloud Object Storage](https://console.bluemix.net/catalog/services/cloud-object-storage) to save images, etc,
@@ -111,4 +116,53 @@ the following command will install associated NodeRED package:
 ```
 /QOpenSys/pkgs/bin/npm install node-red-contrib-cos
 ```
+
+To launch NodeRED, leave the the QShell, and launch a PASE terminal (*QP2TERM*), and start NodeRED:
+```
+CALL QP2TERM
+	/QOpenSys/pkgs/lib/nodejs8/bin/node-red -v
+```
+
+All being well, you should see the NodeRED console start, and get confirmation that flows have started:
+
+```
+3 Dec 14:19:54 - [info]                                                                                                          
+                                                                                                                                 
+Welcome to Node-RED                                                                                                              
+===================                                                                                                              
+                                                                                                                                 
+3 Dec 14:19:54 - [info] Node-RED version: v0.18.7                                                                                
+3 Dec 14:19:54 - [info] Node.js  version: v8.11.3                                                                                
+3 Dec 14:19:54 - [info] OS400 7.3 ppc64 BE                                                                                       
+3 Dec 14:19:55 - [info] Loading palette nodes                                                                                    
+3 Dec 14:19:56 - [warn] ------------------------------------------------------                                                   
+3 Dec 14:19:56 - [warn] [node-red/rpi-gpio] Info : Ignoring Raspberry Pi specific node                                           
+3 Dec 14:19:56 - [warn] ------------------------------------------------------                                                   
+3 Dec 14:19:56 - [info] Settings file  : /HOME/QSECOFR/.node-red/settings.js                                                     
+3 Dec 14:19:56 - [info] User directory : /HOME/QSECOFR/.node-red                                                                 
+3 Dec 14:19:56 - [warn] Projects disabled : editorTheme.projects.enabled=false                                                   
+3 Dec 14:19:56 - [info] Flows file     : /HOME/QSECOFR/.node-red/flows_.json                                                     
+(node:793) Warning: N-API is an experimental feature and could change at any time.                                               
+3 Dec 14:19:56 - [info] Server now running at http://127.0.0.1:1880/                                                         
+3 Dec 14:19:56 - [warn]                                                                                                      
+                                                                                                                             
+---------------------------------------------------------------------                                                        
+Your flow credentials file is encrypted using a system-generated key.                                                        
+                                                                                                                             
+If the system-generated key is lost for any reason, your credentials                                                         
+file will not be recoverable, you will have to delete it and re-enter                                                        
+your credentials.                                                                                                            
+                                                                                                                             
+You should set your own key using the 'credentialSecret' option in                                                           
+your settings file. Node-RED will then re-encrypt your credentials                                                           
+file using your chosen key the next time you deploy a change.                                                                
+---------------------------------------------------------------------                                                        
+                                                                                                                             
+3 Dec 14:19:56 - [info] Starting flows                                                                                       
+3 Dec 14:19:56 - [info] Started flows                                                                                       
+
+```
+
+You should now be able to launch the NodeRED IDE from your browser on port *1880*.
+
 
