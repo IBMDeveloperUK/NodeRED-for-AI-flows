@@ -1,0 +1,1443 @@
+[{
+	"id": "f2fc6749.6765f",
+	"type": "tab",
+	"label": "IBMi",
+	"disabled": false,
+	"info": ""
+}, {
+	"id": "af16372.7b36bc8",
+	"type": "tab",
+	"label": "AI",
+	"disabled": false,
+	"info": ""
+}, {
+	"id": "9522ba86.1bb01",
+	"type": "tab",
+	"label": "COS",
+	"disabled": false,
+	"info": ""
+}, {
+	"id": "ea2ea80c.14c7b",
+	"type": "tab",
+	"label": "IOT",
+	"disabled": false,
+	"info": ""
+}, {
+	"id": "a1690880.a27538",
+	"type": "cos-config",
+	"z": "",
+	"apiKeyId": "erpnHn3iG7rMNmYRqRLT14m5v_eEkstKooRwS8UexlZt",
+	"location": "eu-gb",
+	"ibmAuthEndpoint": "https://iam.ng.bluemix.net/oidc/token",
+	"endpoint": "s3.eu-gb.objectstorage.softlayer.net",
+	"serviceInstanceId": "crn:v1:bluemix:public:iam-identity::a/290f8f438c15a26b2b129419c1d2e505::serviceid:ServiceId-21b49ece-5814-46b6-8d92-ce1958879147",
+	"hmac": false,
+	"accesskeyid": "",
+	"accesskey": "",
+	"name": "aivision"
+}, {
+	"id": "ce243296.786dc",
+	"type": "DB2 for i Config",
+	"z": "",
+	"cnnname": "gcc",
+	"db": "*LOCAL",
+	"keepalive": true
+}, {
+	"id": "66a166ef.50e9c",
+	"type": "inject",
+	"z": "f2fc6749.6765f",
+	"name": "",
+	"topic": "",
+	"payload": "",
+	"payloadType": "date",
+	"repeat": "",
+	"crontab": "",
+	"once": false,
+	"onceDelay": 0.1,
+	"x": 120,
+	"y": 400,
+	"wires": [
+		["1603cee5.373361"]
+	]
+}, {
+	"id": "1603cee5.373361",
+	"type": "exec",
+	"z": "f2fc6749.6765f",
+	"command": "uname -a",
+	"addpay": false,
+	"append": "",
+	"useSpawn": "false",
+	"timer": "",
+	"oldrc": false,
+	"name": "",
+	"x": 540,
+	"y": 400,
+	"wires": [
+		["3e908892.7b3fb"],
+		["3e908892.7b3fb"],
+		["3e908892.7b3fb"]
+	]
+}, {
+	"id": "3e908892.7b3fb",
+	"type": "debug",
+	"z": "f2fc6749.6765f",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "false",
+	"x": 1090,
+	"y": 400,
+	"wires": []
+}, {
+	"id": "f878dee5.ea6e7",
+	"type": "http in",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"url": "/chat",
+	"method": "get",
+	"upload": false,
+	"swaggerDoc": "",
+	"x": 100,
+	"y": 360,
+	"wires": [
+		["eb491a3e.76cad8", "8dc90e35.5e949"]
+	]
+}, {
+	"id": "5b7f209.84293e",
+	"type": "http response",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"statusCode": "",
+	"headers": {
+		"Cache-Control": "no-store"
+	},
+	"x": 1130,
+	"y": 360,
+	"wires": []
+}, {
+	"id": "eb491a3e.76cad8",
+	"type": "template",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"field": "payload",
+	"fieldType": "msg",
+	"format": "handlebars",
+	"syntax": "mustache",
+	"template": "<html>\n<head>\n<script>\n    // common variables\nvar iBytesUploaded = 0;\nvar iBytesTotal = 0;\nvar iPreviousBytesLoaded = 0;\nvar iMaxFilesize = 1048576000; // 1MB\nvar oTimer = 0;\nvar sResultFileSize = '';\nfunction secondsToTime(secs) { // we will use this function to convert seconds in normal time format\n    var hr = Math.floor(secs / 3600);\n    var min = Math.floor((secs - (hr * 3600))/60);\n    var sec = Math.floor(secs - (hr * 3600) -  (min * 60));\n    if (hr < 10) {hr = \"0\" + hr; }\n    if (min < 10) {min = \"0\" + min;}\n    if (sec < 10) {sec = \"0\" + sec;}\n    if (hr) {hr = \"00\";}\n    return hr + ':' + min + ':' + sec;\n};\nfunction bytesToSize(bytes) {\n    var sizes = ['Bytes', 'KB', 'MB'];\n    if (bytes == 0) return 'n/a';\n    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));\n    return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];\n};\nfunction fileSelected() {\n    // hide different warnings\n    document.getElementById('upload_response').style.display = 'none';\n    document.getElementById('error').style.display = 'none';\n    document.getElementById('error2').style.display = 'none';\n    document.getElementById('abort').style.display = 'none';\n    document.getElementById('warnsize').style.display = 'none';\n    // get selected file element\n    var oFile = document.getElementById('image_file').files[0];\n    // filter for image files\n    var rFilter = /^(image\\/bmp|image\\/gif|image\\/jpeg|image\\/png|image\\/tiff)$/i;\n    if (! rFilter.test(oFile.type)) {\n        document.getElementById('error').style.display = 'block';\n        return;\n    }\n    // little test for filesize\n    if (oFile.size > iMaxFilesize) {\n        document.getElementById('warnsize').style.display = 'block';\n        return;\n    }\n    // get preview element\n    var oImage = document.getElementById('preview');\n    // prepare HTML5 FileReader\n    var oReader = new FileReader();\n        oReader.onload = function(e){\n        // e.target.result contains the DataURL which we will use as a source of the image\n        oImage.src = e.target.result;\n        oImage.onload = function () { // binding onload event\n            // we are going to display some custom image information here\n            sResultFileSize = bytesToSize(oFile.size);\n            document.getElementById('fileinfo').style.display = 'block';\n            document.getElementById('filename').innerHTML = 'Name: ' + oFile.name;\n            document.getElementById('filesize').innerHTML = 'Size: ' + sResultFileSize;\n            document.getElementById('filetype').innerHTML = 'Type: ' + oFile.type;\n            document.getElementById('filedim').innerHTML = 'Dimension: ' + oImage.naturalWidth + ' x ' + oImage.naturalHeight;\n        };\n    };\n    // read selected file as DataURL\n    oReader.readAsDataURL(oFile);\n}\nfunction startUploading() {\n    // cleanup all temp states\n    iPreviousBytesLoaded = 0;\n    document.getElementById('upload_response').style.display = 'none';\n    document.getElementById('error').style.display = 'none';\n    document.getElementById('error2').style.display = 'none';\n    document.getElementById('abort').style.display = 'none';\n    document.getElementById('warnsize').style.display = 'none';\n    document.getElementById('progress_percent').innerHTML = '';\n    var oProgress = document.getElementById('progress');\n    oProgress.style.display = 'block';\n    oProgress.style.width = '0px';\n    // get form data for POSTing\n    //var vFD = document.getElementById('upload_form').getFormData(); // for FF3\n    var vFD = new FormData(document.getElementById('upload_form'));\n    // create XMLHttpRequest object, adding few event listeners, and POSTing our data\n    var oXHR = new XMLHttpRequest();\n    oXHR.upload.addEventListener('progress', uploadProgress, false);\n    oXHR.addEventListener('load', uploadFinish, false);\n    oXHR.addEventListener('error', uploadError, false);\n    oXHR.addEventListener('abort', uploadAbort, false);\n    oXHR.open('POST', '/upload.php');\n    oXHR.send(vFD);\n    // set inner timer\n    oTimer = setInterval(doInnerUpdates, 300);\n}\nfunction doInnerUpdates() { // we will use this function to display upload speed\n    var iCB = iBytesUploaded;\n    var iDiff = iCB - iPreviousBytesLoaded;\n    // if nothing new loaded - exit\n    if (iDiff == 0)\n        return;\n    iPreviousBytesLoaded = iCB;\n    iDiff = iDiff * 2;\n    var iBytesRem = iBytesTotal - iPreviousBytesLoaded;\n    var secondsRemaining = iBytesRem / iDiff;\n    // update speed info\n    var iSpeed = iDiff.toString() + 'B/s';\n    if (iDiff > 1024 * 1024) {\n        iSpeed = (Math.round(iDiff * 100/(1024*1024))/100).toString() + 'MB/s';\n    } else if (iDiff > 1024) {\n        iSpeed =  (Math.round(iDiff * 100/1024)/100).toString() + 'KB/s';\n    }\n    document.getElementById('speed').innerHTML = iSpeed;\n    document.getElementById('remaining').innerHTML = '| ' + secondsToTime(secondsRemaining);\n}\nfunction uploadProgress(e) { // upload process in progress\n    if (e.lengthComputable) {\n        iBytesUploaded = e.loaded;\n        iBytesTotal = e.total;\n        var iPercentComplete = Math.round(e.loaded * 100 / e.total);\n        var iBytesTransfered = bytesToSize(iBytesUploaded);\n        document.getElementById('progress_percent').innerHTML = iPercentComplete.toString() + '%';\n        document.getElementById('progress').style.width = (iPercentComplete * 4).toString() + 'px';\n        document.getElementById('b_transfered').innerHTML = iBytesTransfered;\n        if (iPercentComplete == 100) {\n            var oUploadResponse = document.getElementById('upload_response');\n            oUploadResponse.innerHTML = '<h1>Please wait...processing</h1>';\n            oUploadResponse.style.display = 'block';\n        }\n    } else {\n        document.getElementById('progress').innerHTML = 'unable to compute';\n    }\n}\nfunction uploadFinish(e) { // upload successfully finished\n    var oUploadResponse = document.getElementById('upload_response');\n    oUploadResponse.innerHTML = e.target.responseText;\n    oUploadResponse.style.display = 'block';\n    document.getElementById('progress_percent').innerHTML = '100%';\n    document.getElementById('progress').style.width = '400px';\n    document.getElementById('filesize').innerHTML = sResultFileSize;\n    document.getElementById('remaining').innerHTML = '| 00:00:00';\n    clearInterval(oTimer);\n}\nfunction uploadError(e) { // upload error\n    document.getElementById('error2').style.display = 'block';\n    clearInterval(oTimer);\n}\nfunction uploadAbort(e) { // upload abort\n    document.getElementById('abort').style.display = 'block';\n    clearInterval(oTimer);\n}\n</script>\n</head>\n<body>\n<h1>POWER VUG -- AI for IBMi</h1>\n<form method=post action=\"/chat\">\n    What would you like to know? <input type=text length=200 name=chat />\n    <select name=lang>\n        <option value=en selected>English</option>\n        <option value=nl>Dutch</option>\n        <option value=fr>French</option> \n        <option value=pl>Polish</option>\n        <option value=ru>Russian</option>\n    </select>\n    <input type=submit>\n</form>\n\n<div class=results>\n    {{{results}}}\n</div>\n        <div class=\"container\">\n                <div id=\"upload_response\"></div>\n            <div class=\"contr\"><h2>You can select the file (image) and click Upload button</h2></div>\n            <div class=\"upload_form_cont\">\n                <form id=\"upload_form\" enctype=\"multipart/form-data\" method=\"post\" action=\"upload.php\">\n                    <div>\n                        <div><label for=\"image_file\">Please select image file</label></div>\n                        <div><input type=\"file\" name=\"image_file\" id=\"image_file\" onchange=\"fileSelected();\" /></div>\n                    </div>\n                    <div>\n                        <input type=\"button\" value=\"Classify\" onclick=\"startUploading()\" />\n                    </div>\n                    <div id=\"fileinfo\">\n                        <div id=\"filename\"></div>\n                        <div id=\"filesize\"></div>\n                        <div id=\"filetype\"></div>\n                        <div id=\"filedim\"></div>\n                    </div>\n                    <div id=\"error\">You should select valid image files only!</div>\n                    <div id=\"error2\">An error occurred while uploading the file</div>\n                    <div id=\"abort\">The upload has been canceled by the user or the browser dropped the connection</div>\n                    <div id=\"warnsize\">Your file is very big. We can't accept it. Please select more small file</div>\n                    <div id=\"progress_info\">\n                        <div id=\"progress\"></div>\n                        <div id=\"progress_percent\">&nbsp;</div>\n                        <div class=\"clear_both\"></div>\n                        <div>\n                            <div id=\"speed\">&nbsp;</div>\n                            <div id=\"remaining\">&nbsp;</div>\n                            <div id=\"b_transfered\">&nbsp;</div>\n                            <div class=\"clear_both\"></div>\n                        </div>\n\n                    </div>\n                </form>\n                <img id=\"preview\" />\n            </div>\n        </div>\n\n</body>\n",
+	"output": "str",
+	"x": 940,
+	"y": 360,
+	"wires": [
+		["5b7f209.84293e", "b7d06fb.7d9249"]
+	]
+}, {
+	"id": "2d0efe91.6685e2",
+	"type": "http in",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"url": "/chat",
+	"method": "post",
+	"upload": false,
+	"swaggerDoc": "",
+	"x": 100,
+	"y": 120,
+	"wires": [
+		["8dc90e35.5e949", "86a4624.d09e9a"]
+	]
+}, {
+	"id": "119d629d.539c2d",
+	"type": "template",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"field": "results",
+	"fieldType": "msg",
+	"format": "handlebars",
+	"syntax": "mustache",
+	"template": "\n{{#translation}}\n  {{#response}}\n    {{#translations}}\n        <h1><span style=\"color:red;\">{{translation}}</span></h1>\n    {{/translations}}\n  {{/response}}\n{{/translation}}\n\n{{#payload}}\n {{#output}}\n  {{#text}}\n    <h1><span style=\"color:green;\">{{.}}</span></h1>\n  {{/text}}\n {{/output}}\n{{/payload}}",
+	"output": "str",
+	"x": 940,
+	"y": 300,
+	"wires": [
+		["eb491a3e.76cad8"]
+	]
+}, {
+	"id": "9074bcee.2de4d",
+	"type": "watson-conversation-v1",
+	"z": "af16372.7b36bc8",
+	"name": "chatty",
+	"workspaceid": "96a5a42f-3f86-450a-8f18-bb72570dea43",
+	"multiuser": false,
+	"context": true,
+	"empty-payload": false,
+	"default-endpoint": true,
+	"service-endpoint": "https://gateway.watsonplatform.net/assistant/api",
+	"timeout": "",
+	"optout-learning": false,
+	"x": 430,
+	"y": 120,
+	"wires": [
+		["7736f9ec.e910d8", "f09ff182.ad37a"]
+	]
+}, {
+	"id": "8dc90e35.5e949",
+	"type": "debug",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"active": false,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 270,
+	"y": 240,
+	"wires": []
+}, {
+	"id": "86a4624.d09e9a",
+	"type": "change",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"rules": [{
+		"t": "set",
+		"p": "destlang",
+		"pt": "msg",
+		"to": "payload.lang",
+		"tot": "msg"
+	}, {
+		"t": "set",
+		"p": "payload",
+		"pt": "msg",
+		"to": "payload.chat",
+		"tot": "msg"
+	}],
+	"action": "",
+	"property": "",
+	"from": "",
+	"to": "",
+	"reg": false,
+	"x": 280,
+	"y": 120,
+	"wires": [
+		["9074bcee.2de4d"]
+	]
+}, {
+	"id": "7736f9ec.e910d8",
+	"type": "debug",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 570,
+	"y": 120,
+	"wires": []
+}, {
+	"id": "f9c3dc9c.233c3",
+	"type": "switch",
+	"z": "af16372.7b36bc8",
+	"name": "location?",
+	"property": "payload.intents[0].intent",
+	"propertyType": "msg",
+	"rules": [{
+		"t": "eq",
+		"v": "Customer_Care_Store_Location",
+		"vt": "str"
+	}, {
+		"t": "else"
+	}],
+	"checkall": "false",
+	"repair": false,
+	"outputs": 2,
+	"x": 740,
+	"y": 160,
+	"wires": [
+		["606d2316.53ca9c"],
+		["119d629d.539c2d"]
+	]
+}, {
+	"id": "2a3bf5e5.b5c60a",
+	"type": "http in",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"url": "/upload.php",
+	"method": "post",
+	"upload": true,
+	"swaggerDoc": "",
+	"x": 130,
+	"y": 460,
+	"wires": [
+		["9dec97d3.f22c28", "ad113265.cd8dd"]
+	]
+}, {
+	"id": "9dec97d3.f22c28",
+	"type": "debug",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 290,
+	"y": 520,
+	"wires": []
+}, {
+	"id": "2d6d3d68.4231f2",
+	"type": "visual-recognition-v3",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"vr-service-endpoint": "https://gateway.watsonplatform.net/visual-recognition/api",
+	"image-feature": "classifyImage",
+	"lang": "en",
+	"x": 730,
+	"y": 460,
+	"wires": [
+		["911c957.5935d68"]
+	]
+}, {
+	"id": "ad113265.cd8dd",
+	"type": "change",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"rules": [{
+		"t": "set",
+		"p": "payload",
+		"pt": "msg",
+		"to": "req.files[0]buffer",
+		"tot": "msg"
+	}],
+	"action": "",
+	"property": "",
+	"from": "",
+	"to": "",
+	"reg": false,
+	"x": 350,
+	"y": 460,
+	"wires": [
+		["2d6d3d68.4231f2", "9aca42fb.134798"]
+	]
+}, {
+	"id": "6dad2acf.0d52f4",
+	"type": "debug",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 910,
+	"y": 700,
+	"wires": []
+}, {
+	"id": "f5a8f81d.f33618",
+	"type": "template",
+	"z": "af16372.7b36bc8",
+	"name": "classes",
+	"field": "payload",
+	"fieldType": "msg",
+	"format": "handlebars",
+	"syntax": "mustache",
+	"template": "{{#payload}}\n{{#result}}\n<strong>(PowerAI - {{.}})</strong>\n{{/result}}\n{{#classes}}\n{{key}}--{{value}}\n{{/classes}}\n{{/payload}}\n<br>\n{{#result}}\n<table>\n {{#images}}\n  {{#classifiers}}\n    {{#classes}}\n        <tr><td>{{class}}</td><td>{{score}}</td><td>{{{type_hierarchy}}}</td></tr>\n    {{/classes}}\n  {{/classifiers}}\n {{/images}}\n</table>\n{{/result}}",
+	"output": "str",
+	"x": 940,
+	"y": 640,
+	"wires": [
+		["914e3d74.f4131"]
+	]
+}, {
+	"id": "b7d06fb.7d9249",
+	"type": "debug",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"active": false,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 1130,
+	"y": 300,
+	"wires": []
+}, {
+	"id": "914e3d74.f4131",
+	"type": "http response",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"statusCode": "",
+	"headers": {},
+	"x": 1130,
+	"y": 640,
+	"wires": []
+}, {
+	"id": "16953b7f.405105",
+	"type": "http request",
+	"z": "af16372.7b36bc8",
+	"name": "AIVision",
+	"method": "POST",
+	"ret": "txt",
+	"url": "{{aivishost}}:9080/powerai-vision/api/dlapis/{{aivisservice}}",
+	"tls": "",
+	"x": 780,
+	"y": 580,
+	"wires": [
+		["edb9d58.e0bd328", "599db736.c91da8"]
+	],
+	"icon": "node-red-node-watson/visual_recognition.png"
+}, {
+	"id": "911c957.5935d68",
+	"type": "change",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"rules": [{
+		"t": "set",
+		"p": "headers",
+		"pt": "msg",
+		"to": "{\"content-type\":\"multipart/form-data; boundary=XXyyXX\"}",
+		"tot": "json"
+	}, {
+		"t": "set",
+		"p": "rejectUnauthorized",
+		"pt": "msg",
+		"to": "false",
+		"tot": "bool"
+	}],
+	"action": "",
+	"property": "",
+	"from": "",
+	"to": "",
+	"reg": false,
+	"x": 600,
+	"y": 520,
+	"wires": [
+		["14503079.87646"]
+	]
+}, {
+	"id": "c06f1430.ed3898",
+	"type": "template",
+	"z": "af16372.7b36bc8",
+	"name": "form-data",
+	"field": "payload",
+	"fieldType": "msg",
+	"format": "handlebars",
+	"syntax": "mustache",
+	"template": "\n--XXyyXX\nContent-Disposition: form-data; name=\"files\"; filename=\"{{objectname}}\"\nContent-Transfer-Encoding: base64\nContent-Type: application/octet-stream\n\n{{{payload}}}\n--XXyyXX--\n",
+	"output": "str",
+	"x": 940,
+	"y": 520,
+	"wires": [
+		["47e99ffe.d621a", "fa363aec.c1057"]
+	]
+}, {
+	"id": "edb9d58.e0bd328",
+	"type": "debug",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"active": false,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 1130,
+	"y": 580,
+	"wires": []
+}, {
+	"id": "47e99ffe.d621a",
+	"type": "debug",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"active": false,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 1130,
+	"y": 520,
+	"wires": []
+}, {
+	"id": "599db736.c91da8",
+	"type": "json",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"property": "payload",
+	"action": "",
+	"pretty": false,
+	"x": 570,
+	"y": 640,
+	"wires": [
+		["e0e3e941.4e2e18"]
+	]
+}, {
+	"id": "12a6f055.5d74a",
+	"type": "comment",
+	"z": "af16372.7b36bc8",
+	"name": "upload image",
+	"info": "",
+	"x": 110,
+	"y": 520,
+	"wires": []
+}, {
+	"id": "d8903b40.5a87b8",
+	"type": "comment",
+	"z": "af16372.7b36bc8",
+	"name": "chatbot",
+	"info": "",
+	"x": 90,
+	"y": 240,
+	"wires": []
+}, {
+	"id": "e0e3e941.4e2e18",
+	"type": "function",
+	"z": "af16372.7b36bc8",
+	"name": "rejig keys",
+	"func": "var classes = [];\nvar c = msg.payload.classified;\nfor(var k in c){\n    if(c.hasOwnProperty(k)){\n        classes.push({\"key\":k, \"value\":c[k]})\n    }\n}\nmsg.payload.classes = classes;\nreturn msg;",
+	"outputs": 1,
+	"noerr": 0,
+	"x": 780,
+	"y": 640,
+	"wires": [
+		["f5a8f81d.f33618", "6dad2acf.0d52f4"]
+	]
+}, {
+	"id": "39b16f98.3b16c",
+	"type": "catch",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"scope": ["16953b7f.405105"],
+	"x": 90,
+	"y": 640,
+	"wires": [
+		["1f63f919.4fccc7"]
+	]
+}, {
+	"id": "c7eed730.28e348",
+	"type": "debug",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 450,
+	"y": 700,
+	"wires": []
+}, {
+	"id": "1f63f919.4fccc7",
+	"type": "change",
+	"z": "af16372.7b36bc8",
+	"name": "no service",
+	"rules": [{
+		"t": "set",
+		"p": "payload",
+		"pt": "msg",
+		"to": "{\"classified\":\"no service\"}",
+		"tot": "str"
+	}],
+	"action": "",
+	"property": "",
+	"from": "",
+	"to": "",
+	"reg": false,
+	"x": 330,
+	"y": 640,
+	"wires": [
+		["c7eed730.28e348", "599db736.c91da8"]
+	]
+}, {
+	"id": "14503079.87646",
+	"type": "function",
+	"z": "af16372.7b36bc8",
+	"name": "base64",
+	"func": "msg.payload = msg.payload.toString(\"base64\");\nreturn msg;",
+	"outputs": 1,
+	"noerr": 0,
+	"x": 780,
+	"y": 520,
+	"wires": [
+		["c06f1430.ed3898"]
+	]
+}, {
+	"id": "6d9ed126.eaaaa",
+	"type": "DB2 for i",
+	"z": "f2fc6749.6765f",
+	"mydb": "ce243296.786dc",
+	"name": "",
+	"arraymode": true,
+	"x": 560,
+	"y": 100,
+	"wires": [
+		["2b36d098.0a0f7", "3351374b.0b4dd8", "70fddf8.309262"]
+	]
+}, {
+	"id": "cfdbb429.a84b28",
+	"type": "inject",
+	"z": "f2fc6749.6765f",
+	"name": "",
+	"topic": "",
+	"payload": "SELECT * FROM QIWS.QCUSTCDT",
+	"payloadType": "str",
+	"repeat": "",
+	"crontab": "",
+	"once": false,
+	"onceDelay": 0.1,
+	"x": 130,
+	"y": 160,
+	"wires": [
+		["fd94066a.3cea98"]
+	]
+}, {
+	"id": "2b36d098.0a0f7",
+	"type": "debug",
+	"z": "f2fc6749.6765f",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "false",
+	"x": 750,
+	"y": 40,
+	"wires": []
+}, {
+	"id": "3351374b.0b4dd8",
+	"type": "file",
+	"z": "f2fc6749.6765f",
+	"name": "",
+	"filename": "/tmp/ipug-data",
+	"appendNewline": false,
+	"createDir": false,
+	"overwriteFile": "true",
+	"x": 760,
+	"y": 160,
+	"wires": []
+}, {
+	"id": "b8a51d09.875a1",
+	"type": "file in",
+	"z": "f2fc6749.6765f",
+	"name": "",
+	"filename": "/tmp/ipug-data",
+	"format": "utf8",
+	"chunk": false,
+	"sendError": false,
+	"x": 760,
+	"y": 240,
+	"wires": [
+		["9dcfb60d.c5ade8"]
+	]
+}, {
+	"id": "fd9038f7.4a2368",
+	"type": "inject",
+	"z": "f2fc6749.6765f",
+	"name": "",
+	"topic": "",
+	"payload": "",
+	"payloadType": "date",
+	"repeat": "",
+	"crontab": "",
+	"once": false,
+	"onceDelay": 0.1,
+	"x": 120,
+	"y": 240,
+	"wires": [
+		["b8a51d09.875a1"]
+	]
+}, {
+	"id": "a88ecc27.52e5b",
+	"type": "debug",
+	"z": "f2fc6749.6765f",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 1070,
+	"y": 240,
+	"wires": []
+}, {
+	"id": "9dcfb60d.c5ade8",
+	"type": "json",
+	"z": "f2fc6749.6765f",
+	"name": "",
+	"property": "payload",
+	"action": "",
+	"pretty": false,
+	"x": 930,
+	"y": 240,
+	"wires": [
+		["a88ecc27.52e5b"]
+	]
+}, {
+	"id": "63bf6f27.8fb2f",
+	"type": "http in",
+	"z": "f2fc6749.6765f",
+	"name": "",
+	"url": "/qcustcdt",
+	"method": "get",
+	"upload": false,
+	"swaggerDoc": "",
+	"x": 110,
+	"y": 100,
+	"wires": [
+		["fd94066a.3cea98"]
+	]
+}, {
+	"id": "fd94066a.3cea98",
+	"type": "change",
+	"z": "f2fc6749.6765f",
+	"name": "QIWS.QCUSTCDT",
+	"rules": [{
+		"t": "set",
+		"p": "payload",
+		"pt": "msg",
+		"to": "SELECT * FROM QIWS.QCUSTCDT",
+		"tot": "str"
+	}],
+	"action": "",
+	"property": "",
+	"from": "",
+	"to": "",
+	"reg": false,
+	"x": 350,
+	"y": 100,
+	"wires": [
+		["6d9ed126.eaaaa"]
+	]
+}, {
+	"id": "70fddf8.309262",
+	"type": "template",
+	"z": "f2fc6749.6765f",
+	"name": "",
+	"field": "payload",
+	"fieldType": "msg",
+	"format": "handlebars",
+	"syntax": "mustache",
+	"template": "{{#payload}}\n <div class=row>\n     <span class=name >{{LSTNAM}},{{INIT}}</span>\n     <span class=address>{{CITY}},{{STATE}}</span>\n </div>\n{{/payload}}",
+	"output": "str",
+	"x": 740,
+	"y": 100,
+	"wires": [
+		["445b833e.3ed68c"]
+	]
+}, {
+	"id": "b4b51e1b.adbeb",
+	"type": "http response",
+	"z": "f2fc6749.6765f",
+	"name": "",
+	"statusCode": "",
+	"headers": {},
+	"x": 1070,
+	"y": 100,
+	"wires": []
+}, {
+	"id": "445b833e.3ed68c",
+	"type": "switch",
+	"z": "f2fc6749.6765f",
+	"name": "",
+	"property": "req",
+	"propertyType": "msg",
+	"rules": [{
+		"t": "nnull"
+	}],
+	"checkall": "true",
+	"repair": false,
+	"outputs": 1,
+	"x": 910,
+	"y": 100,
+	"wires": [
+		["b4b51e1b.adbeb"]
+	]
+}, {
+	"id": "d4674be6.3b2d08",
+	"type": "inject",
+	"z": "f2fc6749.6765f",
+	"name": "",
+	"topic": "",
+	"payload": "select distinct state from qiws.qcustcdt order by 1 asc",
+	"payloadType": "str",
+	"repeat": "",
+	"crontab": "",
+	"once": false,
+	"onceDelay": 0.1,
+	"x": 390,
+	"y": 160,
+	"wires": [
+		["6d9ed126.eaaaa"]
+	]
+}, {
+	"id": "7c941871.c9cd98",
+	"type": "watson-translator",
+	"z": "af16372.7b36bc8",
+	"name": "translate",
+	"action": "translate",
+	"basemodel": "en-nl",
+	"domain": "general",
+	"srclang": "en",
+	"destlang": "nl",
+	"password": "",
+	"apikey": "f4niKzr3ygaClCEs3j8G1Fo3CH9YAUeP8CILZIlDCj8I",
+	"custom": "",
+	"domainhidden": "general",
+	"srclanghidden": "en",
+	"destlanghidden": "nl",
+	"basemodelhidden": "en-nl",
+	"customhidden": "",
+	"filetype": "forcedglossary",
+	"trainid": "",
+	"lgparams2": true,
+	"neural": false,
+	"default-endpoint": true,
+	"service-endpoint": "https://gateway.watsonplatform.net/language-translator/api",
+	"x": 940,
+	"y": 180,
+	"wires": [
+		["afbfffdf.d277f", "fcb63736.b9c5a8"]
+	]
+}, {
+	"id": "afbfffdf.d277f",
+	"type": "debug",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 1130,
+	"y": 180,
+	"wires": []
+}, {
+	"id": "606d2316.53ca9c",
+	"type": "change",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"rules": [{
+		"t": "set",
+		"p": "payload",
+		"pt": "msg",
+		"to": "payload.output.text[0]",
+		"tot": "msg"
+	}],
+	"action": "",
+	"property": "",
+	"from": "",
+	"to": "",
+	"reg": false,
+	"x": 930,
+	"y": 120,
+	"wires": [
+		["7c941871.c9cd98"]
+	]
+}, {
+	"id": "fcb63736.b9c5a8",
+	"type": "change",
+	"z": "af16372.7b36bc8",
+	"name": "result",
+	"rules": [{
+		"t": "set",
+		"p": "payload.translation",
+		"pt": "msg",
+		"to": "payload",
+		"tot": "msg"
+	}, {
+		"t": "set",
+		"p": "payload",
+		"pt": "msg",
+		"to": "",
+		"tot": "str"
+	}],
+	"action": "",
+	"property": "",
+	"from": "",
+	"to": "",
+	"reg": false,
+	"x": 930,
+	"y": 240,
+	"wires": [
+		["119d629d.539c2d", "e42b5055.10b59"]
+	]
+}, {
+	"id": "e42b5055.10b59",
+	"type": "debug",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 1130,
+	"y": 240,
+	"wires": []
+}, {
+	"id": "f09ff182.ad37a",
+	"type": "switch",
+	"z": "af16372.7b36bc8",
+	"name": "english?",
+	"property": "destlang",
+	"propertyType": "msg",
+	"rules": [{
+		"t": "neq",
+		"v": "en",
+		"vt": "str"
+	}, {
+		"t": "else"
+	}],
+	"checkall": "true",
+	"repair": false,
+	"outputs": 2,
+	"x": 580,
+	"y": 200,
+	"wires": [
+		["f9c3dc9c.233c3"],
+		["119d629d.539c2d"]
+	]
+}, {
+	"id": "142477b9.868928",
+	"type": "comment",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"info": "rwLziVw7Gz8IUqvVqhAZWxTLIfmiPoEIx2opEF9fhCP1",
+	"x": 1060,
+	"y": 460,
+	"wires": []
+}, {
+	"id": "5c4205c6.df6084",
+	"type": "inject",
+	"z": "f2fc6749.6765f",
+	"name": "",
+	"topic": "",
+	"payload": "",
+	"payloadType": "date",
+	"repeat": "",
+	"crontab": "",
+	"once": false,
+	"onceDelay": 0.1,
+	"x": 120,
+	"y": 460,
+	"wires": [
+		["b98851d4.615b08"]
+	]
+}, {
+	"id": "b98851d4.615b08",
+	"type": "exec",
+	"z": "f2fc6749.6765f",
+	"command": "env | grep PATH",
+	"addpay": false,
+	"append": "",
+	"useSpawn": "false",
+	"timer": "",
+	"oldrc": false,
+	"name": "",
+	"x": 560,
+	"y": 460,
+	"wires": [
+		["8801c3fa.9bb308"],
+		["8801c3fa.9bb308"],
+		["8801c3fa.9bb308"]
+	]
+}, {
+	"id": "8801c3fa.9bb308",
+	"type": "debug",
+	"z": "f2fc6749.6765f",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 1070,
+	"y": 460,
+	"wires": []
+}, {
+	"id": "13d2514a.97f7af",
+	"type": "watson-translator",
+	"z": "af16372.7b36bc8",
+	"name": "translate",
+	"action": "translate",
+	"basemodel": "en-nl",
+	"domain": "general",
+	"srclang": "en",
+	"destlang": "nl",
+	"password": "",
+	"apikey": "f4niKzr3ygaClCEs3j8G1Fo3CH9YAUeP8CILZIlDCj8I",
+	"custom": "",
+	"domainhidden": "general",
+	"srclanghidden": "en",
+	"destlanghidden": "nl",
+	"basemodelhidden": "en-nl",
+	"customhidden": "",
+	"filetype": "forcedglossary",
+	"trainid": "",
+	"lgparams2": true,
+	"neural": false,
+	"default-endpoint": true,
+	"service-endpoint": "https://gateway.watsonplatform.net/language-translator/api",
+	"x": 580,
+	"y": 780,
+	"wires": [
+		["dd8fe6e4.b3f788", "cde79dd4.f2b6e8"]
+	]
+}, {
+	"id": "5f2d3d3c.b547e4",
+	"type": "http in",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"url": "/translate",
+	"method": "get",
+	"upload": false,
+	"swaggerDoc": "",
+	"x": 120,
+	"y": 780,
+	"wires": [
+		["b1e8305b.b2f048"]
+	]
+}, {
+	"id": "b1e8305b.b2f048",
+	"type": "change",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"rules": [{
+		"t": "set",
+		"p": "payload",
+		"pt": "msg",
+		"to": "req.query.text",
+		"tot": "msg"
+	}],
+	"action": "",
+	"property": "",
+	"from": "",
+	"to": "",
+	"reg": false,
+	"x": 350,
+	"y": 780,
+	"wires": [
+		["13d2514a.97f7af"]
+	]
+}, {
+	"id": "dd8fe6e4.b3f788",
+	"type": "http response",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"statusCode": "",
+	"headers": {},
+	"x": 1140,
+	"y": 780,
+	"wires": []
+}, {
+	"id": "98d3d227.faedc8",
+	"type": "inject",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"topic": "",
+	"payload": "i hope youre having a good day",
+	"payloadType": "str",
+	"repeat": "",
+	"crontab": "",
+	"once": false,
+	"onceDelay": 0.1,
+	"x": 370,
+	"y": 840,
+	"wires": [
+		["13d2514a.97f7af"]
+	]
+}, {
+	"id": "cde79dd4.f2b6e8",
+	"type": "debug",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 790,
+	"y": 840,
+	"wires": []
+}, {
+	"id": "9aca42fb.134798",
+	"type": "link out",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"links": ["67dbe1b9.76e1c8", "a759fe27.70bc4"],
+	"x": 435,
+	"y": 520,
+	"wires": []
+}, {
+	"id": "38bab4b8.32344c",
+	"type": "http in",
+	"z": "9522ba86.1bb01",
+	"name": "",
+	"url": "/image",
+	"method": "get",
+	"upload": false,
+	"swaggerDoc": "",
+	"x": 130,
+	"y": 80,
+	"wires": [
+		["e1eb739c.9399d", "cd83edf.06a3b1"]
+	]
+}, {
+	"id": "e1eb739c.9399d",
+	"type": "change",
+	"z": "9522ba86.1bb01",
+	"name": "",
+	"rules": [{
+		"t": "set",
+		"p": "objectname",
+		"pt": "msg",
+		"to": "req.query.imageUrl",
+		"tot": "msg"
+	}],
+	"action": "",
+	"property": "",
+	"from": "",
+	"to": "",
+	"reg": false,
+	"x": 420,
+	"y": 80,
+	"wires": [
+		["5af4900e.d331a8"]
+	]
+}, {
+	"id": "cd83edf.06a3b1",
+	"type": "debug",
+	"z": "9522ba86.1bb01",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 350,
+	"y": 120,
+	"wires": []
+}, {
+	"id": "5af4900e.d331a8",
+	"type": "cos-get",
+	"z": "9522ba86.1bb01",
+	"name": "",
+	"bucket": "aivision",
+	"objectname": "",
+	"mode": "1",
+	"filepath": "",
+	"filename": "",
+	"geturl": true,
+	"cosconfig": "a1690880.a27538",
+	"x": 690,
+	"y": 120,
+	"wires": [
+		["5b345206.0b3f64", "7a2def8c.a093a"]
+	]
+}, {
+	"id": "bd1c6858.5dbdc8",
+	"type": "http in",
+	"z": "9522ba86.1bb01",
+	"name": "",
+	"url": "/image/:imageUrl",
+	"method": "get",
+	"upload": false,
+	"swaggerDoc": "",
+	"x": 160,
+	"y": 160,
+	"wires": [
+		["1b001805.a495b", "cd83edf.06a3b1"]
+	]
+}, {
+	"id": "5b345206.0b3f64",
+	"type": "http response",
+	"z": "9522ba86.1bb01",
+	"name": "",
+	"statusCode": "",
+	"headers": {
+		"Content-type": "image/jpeg"
+	},
+	"x": 1150,
+	"y": 120,
+	"wires": []
+}, {
+	"id": "7a2def8c.a093a",
+	"type": "debug",
+	"z": "9522ba86.1bb01",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 870,
+	"y": 80,
+	"wires": []
+}, {
+	"id": "1b001805.a495b",
+	"type": "change",
+	"z": "9522ba86.1bb01",
+	"name": "",
+	"rules": [{
+		"t": "set",
+		"p": "objectname",
+		"pt": "msg",
+		"to": "req.params.imageUrl",
+		"tot": "msg"
+	}],
+	"action": "",
+	"property": "",
+	"from": "",
+	"to": "",
+	"reg": false,
+	"x": 420,
+	"y": 160,
+	"wires": [
+		["5af4900e.d331a8"]
+	]
+}, {
+	"id": "dc3caf48.a6bf98",
+	"type": "comment",
+	"z": "9522ba86.1bb01",
+	"name": "get COS image",
+	"info": "",
+	"x": 140,
+	"y": 120,
+	"wires": []
+}, {
+	"id": "11e50141.ce8fb7",
+	"type": "change",
+	"z": "9522ba86.1bb01",
+	"name": "",
+	"rules": [{
+		"t": "set",
+		"p": "fileformat",
+		"pt": "msg",
+		"to": "req.files[0]mimetype",
+		"tot": "msg"
+	}, {
+		"t": "set",
+		"p": "objectname",
+		"pt": "msg",
+		"to": "req.files[0]originalname",
+		"tot": "msg"
+	}],
+	"action": "",
+	"property": "",
+	"from": "",
+	"to": "",
+	"reg": false,
+	"x": 400,
+	"y": 260,
+	"wires": [
+		["19187ca8.a600b3"]
+	]
+}, {
+	"id": "19187ca8.a600b3",
+	"type": "cos-put",
+	"z": "9522ba86.1bb01",
+	"name": "",
+	"bucket": "aivision",
+	"create": "0",
+	"objectname": "",
+	"mode": "1",
+	"filepath": "",
+	"filename": "",
+	"contentType": "image/jpeg",
+	"geturl": true,
+	"cosconfig": "a1690880.a27538",
+	"x": 690,
+	"y": 260,
+	"wires": [
+		["625ca32b.e0589c"]
+	]
+}, {
+	"id": "a759fe27.70bc4",
+	"type": "link in",
+	"z": "9522ba86.1bb01",
+	"name": "",
+	"links": ["9aca42fb.134798"],
+	"x": 75,
+	"y": 260,
+	"wires": [
+		["11e50141.ce8fb7"]
+	]
+}, {
+	"id": "625ca32b.e0589c",
+	"type": "debug",
+	"z": "9522ba86.1bb01",
+	"name": "",
+	"active": false,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 1150,
+	"y": 260,
+	"wires": []
+}, {
+	"id": "86bb778a.c20c",
+	"type": "http in",
+	"z": "ea2ea80c.14c7b",
+	"name": "",
+	"url": "/iot",
+	"method": "get",
+	"upload": false,
+	"swaggerDoc": "",
+	"x": 120,
+	"y": 140,
+	"wires": [
+		["9fe6518e.7be318", "562ceabc.e86bdc", "845a6a70.5bcc98"]
+	]
+}, {
+	"id": "9fe6518e.7be318",
+	"type": "debug",
+	"z": "ea2ea80c.14c7b",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 266,
+	"y": 92,
+	"wires": []
+}, {
+	"id": "562ceabc.e86bdc",
+	"type": "function",
+	"z": "ea2ea80c.14c7b",
+	"name": "",
+	"func": "msg.keys=[];\nmsg.values=[];\n\nObject.keys(msg.req.query).forEach(function(k){\n    msg.keys.push({\"name\": k, \"value\" : msg.req.query[k]});\n})\n\nreturn msg;",
+	"outputs": 1,
+	"noerr": 0,
+	"x": 246,
+	"y": 192,
+	"wires": [
+		["c9b879c4.de3d3", "7f2f7d18.d7bdac"]
+	]
+}, {
+	"id": "845a6a70.5bcc98",
+	"type": "template",
+	"z": "ea2ea80c.14c7b",
+	"name": "",
+	"field": "payload",
+	"fieldType": "msg",
+	"format": "handlebars",
+	"syntax": "mustache",
+	"template": "{\n\"d\":\n    {\n        \"temperature\": {{req.query.temp}}\n        ,\"humidity\": {{req.query.humid}}\n        ,\"timestamp\": \"{{req.query.time}}\"\n    }\n}",
+	"output": "str",
+	"x": 390,
+	"y": 140,
+	"wires": [
+		["d9cd1414.5a8d58", "de4fc552.f32218", "ff808c0c.5883d8"]
+	]
+}, {
+	"id": "c9b879c4.de3d3",
+	"type": "debug",
+	"z": "ea2ea80c.14c7b",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 386,
+	"y": 252,
+	"wires": []
+}, {
+	"id": "7f2f7d18.d7bdac",
+	"type": "template",
+	"z": "ea2ea80c.14c7b",
+	"name": "",
+	"field": "payload",
+	"fieldType": "msg",
+	"format": "handlebars",
+	"syntax": "mustache",
+	"template": "{\n\"d\":\n    {\n    {{#keys}}\n        \"{{name}}\": \"{{value}}\"\n    {{/keys}}\n    }\n}",
+	"output": "str",
+	"x": 396,
+	"y": 192,
+	"wires": [
+		["7adb689e.73af18"]
+	]
+}, {
+	"id": "d9cd1414.5a8d58",
+	"type": "http response",
+	"z": "ea2ea80c.14c7b",
+	"name": "",
+	"statusCode": "",
+	"headers": {},
+	"x": 1090,
+	"y": 140,
+	"wires": []
+}, {
+	"id": "de4fc552.f32218",
+	"type": "ibmiot out",
+	"z": "ea2ea80c.14c7b",
+	"authentication": "quickstart",
+	"apiKey": "",
+	"outputType": "evt",
+	"deviceId": "iicibmirdc",
+	"deviceType": "0.18.7",
+	"eventCommandType": "status",
+	"format": "json",
+	"data": "{}",
+	"qos": 0,
+	"name": "IBM IoT iicibmirdc",
+	"service": "quickstart",
+	"x": 626,
+	"y": 192,
+	"wires": []
+}, {
+	"id": "ff808c0c.5883d8",
+	"type": "debug",
+	"z": "ea2ea80c.14c7b",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "payload",
+	"x": 566,
+	"y": 92,
+	"wires": []
+}, {
+	"id": "7adb689e.73af18",
+	"type": "debug",
+	"z": "ea2ea80c.14c7b",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "false",
+	"x": 566,
+	"y": 252,
+	"wires": []
+}, {
+	"id": "fa363aec.c1057",
+	"type": "change",
+	"z": "af16372.7b36bc8",
+	"name": "AI Vision dlapi",
+	"rules": [{
+		"t": "set",
+		"p": "aivishost",
+		"pt": "msg",
+		"to": "NAE-165-254-189-45.jarvice.com",
+		"tot": "str"
+	}, {
+		"t": "set",
+		"p": "aivisservice",
+		"pt": "msg",
+		"to": "ca7380af-b616-4af9-b523-dbdfc65046ab",
+		"tot": "str"
+	}],
+	"action": "",
+	"property": "",
+	"from": "",
+	"to": "",
+	"reg": false,
+	"x": 600,
+	"y": 580,
+	"wires": [
+		["16953b7f.405105"]
+	]
+}]
