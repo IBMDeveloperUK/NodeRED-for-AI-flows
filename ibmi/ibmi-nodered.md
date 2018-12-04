@@ -184,3 +184,5 @@ You should now be able to launch the NodeRED IDE from your browser on port *1880
 
 If the IDE opens as expected, you can start on getting your IBMi system to perform image classification with [Watson Visual Recognition](https://github.com/IBMCodeLondon/NodeRED-for-AI-flows/blob/master/watson-cognitive-nodered.md).
 
+
+(A [sample NodeRED configuration](/ibmi/ibmi-nodered-flow.json) is available to import as a quickstart)
