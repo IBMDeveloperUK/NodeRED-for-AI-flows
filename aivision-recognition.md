@@ -33,7 +33,7 @@ a new IP address will more than likely be assigned, resulting in a change of hos
 (such as the NodeRED application) will need to be kept up to date with the current IP address.
 
 To access the training dialog for the AI Vision classifier, launch the "datasets" page:
-`http://<IP Address>:9080/powerai-vision/index.html#!/datasets` - remmebering to replace <IP Address> with the current hostname
+`http://<IP Address>:9080/powerai-vision/index.html#!/datasets` - remembering to replace <IP Address> with the current hostname
 from the trial summary table.
 
 This should take you to a training page:
@@ -62,7 +62,7 @@ Resulting in a populated category of "sedans".
 
 ![sedan-category](/img/powerai-vision-train-cat-sedans-loaded.png)
 
-Go through the same process for different types of vehicle - there are samples for pickup trucks, and golf carts.
+Go through the same process for different types of vehicle - there are samples for pickup trucks, and golf carts in the [/demo folder of this repository](/demo).
 
 ![trained-cats](/img/powerai-vision-train-cats.png)
 
