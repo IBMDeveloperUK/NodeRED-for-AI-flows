@@ -54,7 +54,7 @@ Give your dataset a name, then start loading data to identify the first class of
 
 Start with a "Sedans" category, and load up 15-20 images representing sedan cars:
 
-![sedan-cat](/img/powerai-vision/train-cat-sedans.png)
+![sedan-cat](/img/powerai-vision-train-cat-sedans.png)
 
 ![sedan-cars](/img/powerai-vision-train-cars-sedans.png)
 
