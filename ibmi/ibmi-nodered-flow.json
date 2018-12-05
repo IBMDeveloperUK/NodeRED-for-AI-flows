@@ -23,6 +23,12 @@
 	"disabled": false,
 	"info": ""
 }, {
+	"id": "cfa23d0b.b798f",
+	"type": "tab",
+	"label": "Flow 1",
+	"disabled": false,
+	"info": ""
+}, {
 	"id": "a1690880.a27538",
 	"type": "cos-config",
 	"z": "",
@@ -896,15 +902,6 @@
 		["119d629d.539c2d"]
 	]
 }, {
-	"id": "142477b9.868928",
-	"type": "comment",
-	"z": "af16372.7b36bc8",
-	"name": "",
-	"info": "rwLziVw7Gz8IUqvVqhAZWxTLIfmiPoEIx2opEF9fhCP1",
-	"x": 1060,
-	"y": 460,
-	"wires": []
-}, {
 	"id": "5c4205c6.df6084",
 	"type": "inject",
 	"z": "f2fc6749.6765f",
@@ -974,8 +971,8 @@
 	"trainid": "",
 	"lgparams2": true,
 	"neural": false,
-	"default-endpoint": true,
-	"service-endpoint": "https://gateway.watsonplatform.net/language-translator/api",
+	"default-endpoint": false,
+	"service-endpoint": "https://gateway-fra.watsonplatform.net/language-translator/api",
 	"x": 580,
 	"y": 780,
 	"wires": [
@@ -993,7 +990,7 @@
 	"x": 120,
 	"y": 780,
 	"wires": [
-		["b1e8305b.b2f048"]
+		["b1e8305b.b2f048", "a1ef8aff.29044"]
 	]
 }, {
 	"id": "b1e8305b.b2f048",
@@ -1005,6 +1002,18 @@
 		"p": "payload",
 		"pt": "msg",
 		"to": "req.query.text",
+		"tot": "msg"
+	}, {
+		"t": "set",
+		"p": "srclang",
+		"pt": "msg",
+		"to": "req.query.src",
+		"tot": "msg"
+	}, {
+		"t": "set",
+		"p": "destlang",
+		"pt": "msg",
+		"to": "req.query.tgt",
 		"tot": "msg"
 	}],
 	"action": "",
@@ -1421,13 +1430,13 @@
 		"t": "set",
 		"p": "aivishost",
 		"pt": "msg",
-		"to": "NAE-165-254-189-45.jarvice.com",
+		"to": "NAE-165-254-189-54.jarvice.com",
 		"tot": "str"
 	}, {
 		"t": "set",
 		"p": "aivisservice",
 		"pt": "msg",
-		"to": "ca7380af-b616-4af9-b523-dbdfc65046ab",
+		"to": "51c26331-d288-4dfa-9776-c32cfbced774",
 		"tot": "str"
 	}],
 	"action": "",
@@ -1440,4 +1449,122 @@
 	"wires": [
 		["16953b7f.405105"]
 	]
+}, {
+	"id": "529337b.d2fe1c8",
+	"type": "inject",
+	"z": "cfa23d0b.b798f",
+	"name": "",
+	"topic": "",
+	"payload": "hello world - and welcome PVUG",
+	"payloadType": "str",
+	"repeat": "",
+	"crontab": "",
+	"once": false,
+	"onceDelay": 0.1,
+	"x": 210,
+	"y": 180,
+	"wires": [
+		["9b6989dc.5ea408"]
+	]
+}, {
+	"id": "efc7d7b7.727958",
+	"type": "debug",
+	"z": "cfa23d0b.b798f",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "payload",
+	"x": 830,
+	"y": 200,
+	"wires": []
+}, {
+	"id": "7147b125.8635f",
+	"type": "http in",
+	"z": "cfa23d0b.b798f",
+	"name": "",
+	"url": "/hello",
+	"method": "get",
+	"upload": false,
+	"swaggerDoc": "",
+	"x": 190,
+	"y": 360,
+	"wires": [
+		["b088bf58.d6c838"]
+	]
+}, {
+	"id": "b088bf58.d6c838",
+	"type": "template",
+	"z": "cfa23d0b.b798f",
+	"name": "",
+	"field": "payload",
+	"fieldType": "msg",
+	"format": "handlebars",
+	"syntax": "mustache",
+	"template": "hello world - and welcome PVUG!\n\n{{req.query.text}}",
+	"output": "str",
+	"x": 420,
+	"y": 380,
+	"wires": [
+		["d41728d6.2c06b", "b10e70b8.ba2648"]
+	]
+}, {
+	"id": "d41728d6.2c06b",
+	"type": "http response",
+	"z": "cfa23d0b.b798f",
+	"name": "",
+	"statusCode": "",
+	"headers": {},
+	"x": 790,
+	"y": 380,
+	"wires": []
+}, {
+	"id": "b10e70b8.ba2648",
+	"type": "debug",
+	"z": "cfa23d0b.b798f",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 600,
+	"y": 480,
+	"wires": []
+}, {
+	"id": "9b6989dc.5ea408",
+	"type": "change",
+	"z": "cfa23d0b.b798f",
+	"name": "",
+	"rules": [{
+		"t": "set",
+		"p": "payload",
+		"pt": "msg",
+		"to": "help, Im stuck in a node-red factory",
+		"tot": "str"
+	}],
+	"action": "",
+	"property": "",
+	"from": "",
+	"to": "",
+	"reg": false,
+	"x": 480,
+	"y": 200,
+	"wires": [
+		["efc7d7b7.727958"]
+	]
+}, {
+	"id": "a1ef8aff.29044",
+	"type": "debug",
+	"z": "af16372.7b36bc8",
+	"name": "",
+	"active": true,
+	"tosidebar": true,
+	"console": false,
+	"tostatus": false,
+	"complete": "true",
+	"x": 320,
+	"y": 1000,
+	"wires": []
 }]
