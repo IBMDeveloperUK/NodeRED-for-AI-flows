@@ -26,7 +26,7 @@
 	"id": "a1690880.a27538",
 	"type": "cos-config",
 	"z": "",
-	"apiKeyId": "erpnHn3iG7rMNmYRqRLT14m5v_eEkstKooRwS8UexlZt",
+	"apiKeyId": "",
 	"location": "eu-gb",
 	"ibmAuthEndpoint": "https://iam.ng.bluemix.net/oidc/token",
 	"endpoint": "s3.eu-gb.objectstorage.softlayer.net",
