@@ -80,7 +80,7 @@ It's always good to know what you will get at the end. This workshop will lead t
 ![demo score](img/mg-brs-nodered-ml-score-result.png)
 
 ## On to the Activities ...
-1. [Watson Nodered 101](https://github.com/IBMCodeLondon/Node-RED-Watson-101)
+1. [Watson Nodered 101](https://github.com/IBMDeveloperUK/Node-RED-Watson-101)
 1. [Watson Cognitive services - a visual recognition sample](watson-cognitive-nodered.md)
 1. [Watson Machine Learning scoring service](watson-studio-ml-service.md)
 1. [Azure Cognitive services - simple examples](azure-cognitive-nodered.md)
