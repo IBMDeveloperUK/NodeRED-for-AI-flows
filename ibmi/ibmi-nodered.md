@@ -31,7 +31,7 @@ Historically, this was through an operating system licensed program option known
 
 This approach has been sunsetted in favour of a fully open approrach, based on standard utilities and packaging - [_yum_](http://yum.baseurl.org/) and [_rpm_](http://rpm.org/).
 
-The following installation of NodeRED uses the new installation process exclusively.
+The following installation of NodeRED uses the new installation process exclusively, without any dependence on [ACS](https://www-01.ibm.com/support/docview.wss?uid=isg3T1026805)
 
 
 ### Download and install the IBMi open source bootstrap
@@ -80,7 +80,6 @@ Assuming all goes well, you should see the last few entries in _/tmp/bootstrap.l
 ![bootstrap log](/img/ibmi-nr-bootstrap-sh-log.png)
 
 It is now possible to install a supported version of Node.js as a base for NodeRED.
-
 ```
 	cd /QOpenSys/pkgs/bin
 	
@@ -92,13 +91,22 @@ It is now possible to install a supported version of Node.js as a base for NodeR
 ```
 
 ensure the resulting package libraries are included in the PATH for the PASE//QShell environments
+```
+	export PATH=/QOpenSys/pkgs/bin:/QOpenSys/pkgs/lib/nodejs8/bin:$PATH
+```
 
-_/QOpenSys/pkgs/bin:/QOpenSys/pkgs/lib/nodejs8/bin_
+Optionally, add this command to the _.profile_ file to run each time the shell is started.
+
+Note: some npm package installations need to know where the node executable resides that relates to the runtime of npm - use the following command to help avoid most errors related to this requirement
+```
+	npm config set scripts-prepend-node-path true
+```
+
+Optionally, add this command to the _.profile_ file to run each time the shell is started.
 
 ### NodeRED
 
 Now install NodeRED:
-
 ```
 	npm install -g --unsafe-perm node-red
 
@@ -116,27 +124,30 @@ install the Watson package
 To access [IBM Cloud Object Storage](https://console.bluemix.net/catalog/services/cloud-object-storage) to save images, etc,
 the following command will install associated NodeRED package:
 ```
-/QOpenSys/pkgs/bin/npm install node-red-contrib-cos
+	/QOpenSys/pkgs/bin/npm install node-red-contrib-cos
 ```
 
 #### DB2 for i support
 To use DB2 for i from a javascript application (such as NodeRED) on a system which has been initialised via the open source mechanism instead of 5377-OPS, a new connector module is available - [idb-connector](https://www.npmjs.com/package/idb-connector).
 
-The corresponding [NodeRED DB2 for i module](https://www.npmjs.com/package/node-red-contrib-db2-for-i) can use this package in place of the 5377-OPS version, but needs a minor tweak
 ```
-/QOpenSys/pkgs/bin/npm install idb-connector
-/QOpenSys/pkgs/bin/npm install node-red-contrib-db2-for-i
+	/QOpenSys/pkgs/bin/npm install idb-connector
+	/QOpenSys/pkgs/bin/npm install node-red-contrib-db2-for-i
 ```
-Modify the resulting ibmdb2fori.js file (` /QOpenSys/pkgs/lib/nodejs8/lib/node_modules/node-red-contrib-db2-for-
+The corresponding [NodeRED DB2 for i module](https://www.npmjs.com/package/node-red-contrib-db2-for-i) can use this package in place of the 5377-OPS version, but older versions need a minor tweak: 
+
+Modify the resulting ibmdb2fori.js file (`/QOpenSys/pkgs/lib/nodejs8/lib/node_modules/node-red-contrib-db2-for-
 i/ibmdb2fori.js` ) - change
+
 `       var db = require('/QOpenSys/QIBM/ProdData/OPS/Node6/os400/db2i/lib/db2a');` 
+
 to 
+
 `       var db = require('db2a');` 
 
 ## Launch NodeRED on IBMi
-To launch NodeRED, leave the the QShell, and launch a PASE terminal (*QP2TERM*), and start NodeRED:
+To launch NodeRED, restart QShell, or launch a PASE terminal (*QP2TERM*), and start NodeRED:
 ```
-CALL QP2TERM
 	/QOpenSys/pkgs/lib/nodejs8/bin/node-red -v
 ```
 
