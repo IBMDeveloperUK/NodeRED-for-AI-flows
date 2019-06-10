@@ -35,7 +35,7 @@ Once installed, to more easily use the Watson Cognitive services, installed the 
 
 If you have, or register for, an IBM Cloud Lite account, you will have sufficient runtime memory entitlement to run one NodeRED instance, based on the [Node-RED starter](https://console.bluemix.net/catalog/starters/node-red-starter).
 
-This creates a Node SDK runtime application, _and_ an instance of the Cloudant NoSQL database; you can only have _one instance of the Cloudant database_ under the Lite plan -- effectively, this means you can only create and run one NodeRED starter application with your Lite account. ** Worry not! ** as NodeRED allows for a great deal of flexibility in supoorting mutliple flows, and micro-applications within a single instance.
+This creates a Node SDK runtime application, _and_ an instance of the Cloudant NoSQL database; you can only have _one instance of the Cloudant database_ under the Lite plan -- effectively, this means you can only create and run one NodeRED starter application with your Lite account. ** Worry not! ** as NodeRED allows for a great deal of flexibility in supporting multiple flows, and micro-applications within a single instance.
 
 ### Watson Studio setup
 
@@ -56,14 +56,14 @@ An example of setting up a scoring service to predict customers' propensity to b
 This shows how to create the scoring service - you can then learn how to invoke that service from NodeRED
 
 ### Invoking 3rd party services
-Since NodeRED is a n open source project, the community develops new nodes as needed - earlier this year, a package for interacting with 
+Since NodeRED is an open source project, the community develops new nodes as needed - earlier this year, a package for interacting with 
 [Microsoft Azure cognitive services](https://azure.microsoft.com/en-gb/services/cognitive-services/)
 was created.
 This package - `node-red-contrib-cognitive-services` - makes it quick and easy to invoke these services from within a NodeRED flow.
 An example flow 
 [Node-Red Azure Computer Vision Photo Recognition Complete Example](https://flows.nodered.org/flow/ae3ba3a1403f25e9a465ae95c509da26)
 shows how to invoke the image classifier.
-You will need an Azure account, and the necessary service subsciption keys, to be able to try this out.
+You will need an Azure account, and the necessary service subscription keys, to be able to try this out.
 
 ### Triggering real-time execution model updates
 Using IOT historical data, this
